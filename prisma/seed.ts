@@ -1,5 +1,5 @@
-import { PrismaClient } from "../app/generated/prisma";
-const prisma = new PrismaClient();
+import { prisma } from "../utils/prismaClient";
+
 async function main() {
   await prisma.issue.createMany({
     data: [
