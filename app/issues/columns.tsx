@@ -27,6 +27,10 @@ export const columns: ColumnDef<issue>[] = [
   },
   {
     accessorKey: "status",
-    header: "Status",
+    header: () => (
+      <div className="text-center bg-orange-500/60 text-white font-bold p-[0.3rem] rounded-md">
+        Status
+      </div>
+    ),
   },
 ];
