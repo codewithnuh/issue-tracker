@@ -1,5 +1,7 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
+import { Edit, Trash } from "lucide-react";
 export const columns: ColumnDef<issue>[] = [
   {
     accessorKey: "id",
@@ -32,5 +34,27 @@ export const columns: ColumnDef<issue>[] = [
         Status
       </div>
     ),
+  },
+  {
+    accessorKey: "actions",
+    header: "Actions",
+    cell: ({ row }) => {
+      const originalRowData = row.original;
+      return (
+        <div className="flex items-center justify-center space-x-4 ">
+          {/* <form action=""></form> */}
+          <Button
+            variant={"secondary"}
+            onClick={() => console.log(originalRowData)}
+            className="space-x-3"
+          >
+            Edit <Edit />
+          </Button>
+          <Button variant={"destructive"} className="space-x-3">
+            Edit <Trash />
+          </Button>
+        </div>
+      );
+    },
   },
 ];

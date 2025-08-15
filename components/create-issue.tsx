@@ -11,6 +11,7 @@ import { formOpts } from "@/lib/share-code";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
+import { toast } from "sonner";
 import {
   Select,
   SelectContent,
@@ -18,7 +19,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { file } from "zod";
 import { Button } from "./ui/button";
 
 export const CreateIssueForm = () => {
@@ -26,17 +26,18 @@ export const CreateIssueForm = () => {
     createIssue,
     formOpts.defaultValues as any
   );
+  if (state.success) {
+    toast(state.message, state.data);
+  } else {
+    toast(state.message, state.data);
+  }
   const form = useForm({
     ...formOpts,
     transform: useTransform((baseForm) => mergeForm(baseForm, state!), [state]),
   });
   const formErrors = useStore(form.store, (formState) => formState.errors);
   return (
-    <form
-      action={action as never}
-      className="max-w-md mx-auto space-y-2"
-      onSubmit={() => form.handleSubmit(() => console.log("Form submitted"))}
-    >
+    <form action={action as never} className="max-w-md mx-auto space-y-2">
       {formErrors.map((error) => (
         <p key={error as unknown as string}>{error}</p>
       ))}
@@ -53,6 +54,7 @@ export const CreateIssueForm = () => {
                 Title
               </Label>
               <Input
+                id={field.name}
                 name={field.name}
                 type="text"
                 value={field.state.value}
@@ -81,6 +83,7 @@ export const CreateIssueForm = () => {
                 Description
               </Label>
               <Textarea
+                id={field.name}
                 name={field.name}
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value as string)}

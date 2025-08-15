@@ -1,10 +1,7 @@
 "use server";
 
 import { prisma } from "@/utils/prismaClient";
-import {
-  ServerValidateError,
-  createServerValidate,
-} from "@tanstack/react-form/nextjs";
+import { createServerValidate } from "@tanstack/react-form/nextjs";
 import { formOpts } from "@/lib/share-code";
 const serverValidate = createServerValidate({
   ...formOpts,
@@ -27,8 +24,14 @@ export const fetchAllIssues = async () => {
   const issues = await prisma.issue.findMany({});
   return issues;
 };
-
-export const createIssue = async (prev: unknown, formData: FormData) => {
+export const createIssue = async (
+  prev: unknown,
+  formData: FormData
+): Promise<{
+  success: boolean;
+  data: unknown;
+  message: string;
+}> => {
   try {
     const validatedData = await serverValidate(formData);
     const { title, description, status, priority } = validatedData;
@@ -44,8 +47,16 @@ export const createIssue = async (prev: unknown, formData: FormData) => {
       },
     });
     console.log("Issue created:", data);
-    return data;
+    return {
+      success: true,
+      message: "Issue created successfully",
+      data: data,
+    };
   } catch (error) {
-    console.log(error);
+    return {
+      success: false,
+      message: "Issue not created successfully",
+      data: "",
+    };
   }
 };

@@ -6,6 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
+    "test": "vitest",
     "lint": "next lint",
     "prisma:seed": "ts-node --project prisma/tsconfig.prisma.json prisma/seed.ts"
   },
