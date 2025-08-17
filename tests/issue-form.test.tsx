@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/react";
-import { CreateIssueForm } from "@/components/create-issue";
+import { CreateIssueForm } from "@/components/issue-form";
 import { createIssue } from "@/actions/issues.action";
 import { vi } from "vitest";
 

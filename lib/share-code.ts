@@ -1,6 +1,7 @@
 import { formOptions } from "@tanstack/react-form/nextjs";
 export const formOpts = formOptions({
   defaultValues: {
+    id: "",
     status: "open",
     title: "",
     description: "",
@@ -9,4 +10,7 @@ export const formOpts = formOptions({
     updatedAt: new Date().toISOString(),
   },
 });
-export type FormValues = typeof formOpts.defaultValues;
+type FormValuesRaw = typeof formOpts.defaultValues;
+export type FormValues = Omit<FormValuesRaw, "id"> & {
+  id?: string;
+};

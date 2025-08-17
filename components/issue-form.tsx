@@ -1,5 +1,5 @@
 "use client";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import {
   mergeForm,
   useForm,
@@ -7,7 +7,7 @@ import {
   useTransform,
 } from "@tanstack/react-form";
 import { createIssue } from "@/actions/issues.action";
-import { formOpts } from "@/lib/share-code";
+import { formOpts, FormValues } from "@/lib/share-code";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
@@ -21,18 +21,36 @@ import {
 } from "./ui/select";
 import { Button } from "./ui/button";
 
-export const CreateIssueForm = () => {
+export const IssueForm = ({
+  serverAction,
+  issueId,
+  type,
+  initialValues,
+}: {
+  serverAction: (state: any, payload: FormData) => any;
+  type: "create" | "update";
+  initialValues?: FormValues;
+  issueId?: string;
+}) => {
+  console.log(issueId);
   const [state, action, isPending] = useActionState(
-    createIssue,
-    formOpts.defaultValues as any
+    serverAction,
+    type == "update"
+      ? { ...initialValues, id: issueId }
+      : (formOpts.defaultValues as any)
   );
-  if (state.success) {
-    toast(state.message, state.data);
-  } else {
-    toast(state.message, state.data);
-  }
+  useEffect(() => {
+    if (state.success) {
+      toast.success(state.message, state.data);
+    } else {
+      toast.error(state.message, state.data);
+    }
+  }, [state]);
   const form = useForm({
-    ...formOpts,
+    defaultValues:
+      type == "update"
+        ? { ...initialValues, id: issueId }
+        : formOpts.defaultValues,
     transform: useTransform((baseForm) => mergeForm(baseForm, state!), [state]),
   });
   const formErrors = useStore(form.store, (formState) => formState.errors);
@@ -69,6 +87,24 @@ export const CreateIssueForm = () => {
           );
         }}
       </form.Field>
+      <form.Field name="id">
+        {(field) => {
+          return (
+            <div>
+              <Label className="mb-2" htmlFor={field.name}>
+                Id
+              </Label>
+              <Input
+                id={field.name}
+                name={field.name}
+                type="text"
+                className="hidden"
+                value={field.state.value}
+              />
+            </div>
+          );
+        }}
+      </form.Field>
       <form.Field
         name="description"
         validators={{
@@ -99,10 +135,9 @@ export const CreateIssueForm = () => {
       </form.Field>
       <div className="flex items-center  space-x-4">
         <form.Field
-          name="priority"
+          name="status"
           validators={{
-            onChange: ({ value }) =>
-              value ? undefined : "Priority is required",
+            onChange: ({ value }) => (value ? undefined : "Status is required"),
           }}
         >
           {(field) => {
@@ -137,9 +172,10 @@ export const CreateIssueForm = () => {
           }}
         </form.Field>
         <form.Field
-          name="status"
+          name="priority"
           validators={{
-            onChange: ({ value }) => (value ? undefined : "Status is required"),
+            onChange: ({ value }) =>
+              value ? undefined : "Priority is required",
           }}
         >
           {(field) => {

@@ -18,8 +18,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={` antialiased ${poppins.className}`}>{children}</body>
-      <Toaster />
+      <body className={` antialiased ${poppins.className}`}>
+        {children} <Toaster theme="dark" className="text-white" />
+      </body>
     </html>
   );
 }

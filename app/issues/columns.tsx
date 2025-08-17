@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit, Trash } from "lucide-react";
+import Link from "next/link";
 export const columns: ColumnDef<issue>[] = [
   {
     accessorKey: "id",
@@ -43,12 +44,10 @@ export const columns: ColumnDef<issue>[] = [
       return (
         <div className="flex items-center justify-center space-x-4 ">
           {/* <form action=""></form> */}
-          <Button
-            variant={"secondary"}
-            onClick={() => console.log(originalRowData)}
-            className="space-x-3"
-          >
-            Edit <Edit />
+          <Button variant={"secondary"} asChild className="space-x-3">
+            <Link href={`/issues/edit/${originalRowData.id}`}>
+              Edit <Edit />
+            </Link>
           </Button>
           <Button variant={"destructive"} className="space-x-3">
             Edit <Trash />
