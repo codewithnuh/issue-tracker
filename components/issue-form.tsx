@@ -32,7 +32,6 @@ export const IssueForm = ({
   initialValues?: FormValues;
   issueId?: string;
 }) => {
-  console.log(issueId);
   const [state, action, isPending] = useActionState(
     serverAction,
     type == "update"

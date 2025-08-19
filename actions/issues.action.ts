@@ -3,6 +3,7 @@
 import { prisma } from "@/utils/prismaClient";
 import { createServerValidate } from "@tanstack/react-form/nextjs";
 import { formOpts } from "@/lib/share-code";
+import { revalidatePath } from "next/cache";
 const serverValidate = createServerValidate({
   ...formOpts,
   onServerValidate: ({ value }) => {
@@ -105,6 +106,42 @@ export const updateIssue = async (
     return {
       success: false,
       message: "Issue not updated successfully",
+      data: "",
+    };
+  }
+};
+export const deleteIssue = async (
+  prev: unknown,
+  formData: FormData
+): Promise<{
+  success: boolean;
+  data: unknown;
+  message: string;
+}> => {
+  try {
+    const id = formData.get("id") as string;
+    if (!id) {
+      return {
+        success: false,
+        message: "Issue ID is required for deletion",
+        data: "",
+      };
+    }
+    const data = await prisma.issue.delete({
+      where: { id },
+    });
+    console.log("Issue deleted:", data);
+    revalidatePath("/issues");
+    return {
+      success: true,
+      message: "Issue deleted successfully",
+      data: data,
+    };
+  } catch (error) {
+    console.error("Error deleting issue:", error);
+    return {
+      success: false,
+      message: "Issue not deleted successfully",
       data: "",
     };
   }

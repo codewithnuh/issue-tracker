@@ -44,7 +44,7 @@ export function DataTable<TData, TValue>({
     <div>
       {" "}
       <div className="overflow-hidden rounded-md border ">
-        <Table className="min-h-96 py-5">
+        <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -67,11 +67,12 @@ export function DataTable<TData, TValue>({
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
+                  className="h-4"
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="p-2">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

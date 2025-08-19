@@ -1,8 +1,50 @@
 "use client";
+import { deleteIssue } from "@/actions/issues.action";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit, Trash } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
+import { useActionState, useEffect } from "react";
+
+const DeleteIssueForm = ({ issueId }: { issueId: string }) => {
+  const [state, formAction, isPending] = useActionState(deleteIssue, {
+    success: false,
+    message: "",
+    data: "",
+  });
+
+  useEffect(() => {
+    if (state.message && state.message.length > 0) {
+      if (state.success) {
+        toast.success(state.message);
+      } else {
+        toast.error(state.message);
+      }
+    }
+  }, [state]);
+
+  return (
+    <form action={formAction}>
+      <input type="hidden" name="id" value={issueId} />
+      <AlertDialogAction type="submit" disabled={isPending}>
+        {isPending ? "Deleting..." : "Confirm"}
+      </AlertDialogAction>
+    </form>
+  );
+};
+
 export const columns: ColumnDef<issue>[] = [
   {
     accessorKey: "id",
@@ -39,6 +81,7 @@ export const columns: ColumnDef<issue>[] = [
   {
     accessorKey: "actions",
     header: "Actions",
+    enableHiding: false,
     cell: ({ row }) => {
       const originalRowData = row.original;
       return (
@@ -49,9 +92,26 @@ export const columns: ColumnDef<issue>[] = [
               Edit <Edit />
             </Link>
           </Button>
-          <Button variant={"destructive"} className="space-x-3">
-            Edit <Trash />
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive" className="cursor-pointer">
+                Delete <Trash className="ml-2" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete
+                  your account and remove your data from our servers.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <DeleteIssueForm issueId={row.original.id} />
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       );
     },
